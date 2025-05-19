@@ -1,7 +1,4 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from taggit.managers import TaggableManager
 from vendors.models import Vendor
 from django.utils.text import slugify
