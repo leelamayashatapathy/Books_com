@@ -2,6 +2,8 @@ from pathlib import Path
 
 from datetime import timedelta
 
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,6 +122,15 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=2),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+
+
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
+TWILIO_PHONE_NUMBER = config('TWILIO_PHONE_NUMBER')
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
