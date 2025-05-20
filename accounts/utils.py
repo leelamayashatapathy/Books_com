@@ -3,6 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+
+from django.conf import settings
+from twilio.rest import Client
+
+
 def get_token_for_user(user):
     refresh_ = RefreshToken.for_user(user)
     return({
@@ -40,3 +45,15 @@ class CustomTokenRefreshView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
     
+    
+
+
+
+
+def send_otp_sms(user):
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    client.messages.create(
+        body=f"Your OTP is {user.otp}",
+        from_=settings.TWILIO_PHONE_NUMBER,
+        to=user.phone
+    )

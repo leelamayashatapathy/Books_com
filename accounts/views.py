@@ -8,7 +8,9 @@ from rest_framework.permissions import AllowAny
 
 from .serializers import UserSerializer
 
-from .utils import get_token_for_user
+from .utils import get_token_for_user,send_otp_sms
+
+
 
 
 
@@ -20,16 +22,20 @@ class RegistrationView(APIView):
         if serializer.is_valid():
             user = serializer.save(is_active=False, is_registration_pending=True)
             user.generate_otp()
-            print(f"OTP sent to {user.email}: {user.otp}")
+            # send_otp_email(user)
+            if user.phone:
+                print(user.phone)
+                send_otp_sms(user)
 
             return Response({
                 "status": True,
-                "message": "OTP sent. Please verify to complete registration."
-            }, status=201)
+                "message": "OTP sent to your email/phone. Please verify to complete registration."
+            }, status=status.HTTP_201_CREATED)
+
         return Response({
             "status": False,
             "errors": serializer.errors
-        }, status=400)
+        }, status.HTTP_400_BAD_REQUEST)
         
         
         
@@ -45,9 +51,9 @@ class VerifyOTPView(APIView):
             return Response({
                 "status": False,
                 "message": "No pending registration found."
-            }, status=404)
+            }, status.HTTP_404_NOT_FOUND)
 
-        if user.otp != otp:
+        if user.otp != str(otp):
             return Response({
                 "status": False,
                 "message": "Invalid OTP."
@@ -57,7 +63,7 @@ class VerifyOTPView(APIView):
             return Response({
                 "status": False,
                 "message": "OTP expired."
-            }, status=400)
+            }, status.HTTP_400_BAD_REQUEST)
 
         user.is_active = True
         user.is_registration_pending = False
@@ -71,7 +77,7 @@ class VerifyOTPView(APIView):
             "status": True,
             "message": "Registration verified successfully.",
             "token": token
-        }, status=200)
+        }, status.HTTP_200_OK)
 
 
             
@@ -96,5 +102,5 @@ class LoginView(APIView):
         return Response({
             "status": False,
             "message": "Invalid credentials"
-        }, status=400)
+        }, status.HTTP_400_BAD_REQUEST)
             
