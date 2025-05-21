@@ -11,3 +11,9 @@ class VendorSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         vendor = Vendor.objects.create(**validated_data)
         return vendor
+    
+    
+class VendorAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VendorAddress
+        fields = "__all__"

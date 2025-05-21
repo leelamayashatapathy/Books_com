@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . models import User
+from . models import User,UserAddress
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,3 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
             is_vendor=validated_data.get('is_vendor', False)
         )
         return user
+    
+    
+class UserAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAddress
+        fields = "__all__"

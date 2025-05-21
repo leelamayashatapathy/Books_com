@@ -2,11 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
-from .models import User
+from .models import User,UserAddress
 from rest_framework.permissions import AllowAny
 
+from django.db.models import Q
 
-from .serializers import UserSerializer
+
+from .serializers import UserSerializer,UserAddressSerializer
 
 from .utils import get_token_for_user,send_otp_sms
 
@@ -103,4 +105,53 @@ class LoginView(APIView):
             "status": False,
             "message": "Invalid credentials"
         }, status.HTTP_400_BAD_REQUEST)
+        
+        
+        
+        
+class UserAddressApiView(APIView):
+    
+    def post(self, request):
+        data = request.data
+        user = request.user
+        data['user'] = user.id
+        serializer = UserAddressSerializer(data=data)
+        if serializer.is_valid():
+            insatnce = serializer.save()
+            user_address = UserAddressSerializer(insatnce).data
+            return Response({
+                "status": True,
+                "message": "User Address Added successfully",
+                "user": user_address
+            })
+        return Response({
+            "status": False,
+            "message": "Bad request",
+            "error": serializer.errors
+        }, status.HTTP_400_BAD_REQUEST)
+        
+    def put(self,request):
+        user = request.user
+        data = request.data
+        add_id = data.get('id')
+        print(add_id)
+        query = UserAddress.objects.get(id=add_id, user=user)
+        serializer = UserAddressSerializer(query,data,partial=True)
+        if serializer.is_valid():
+            instance = serializer.save()
+            add_data = UserAddressSerializer(instance).data
+            return Response({
+                "status": True,
+                "message": "User Address updated successfully",
+                "user": add_data
+            })
+        return Response({
+            "status": False,
+            "message": "Bad request",
+            "error": serializer.errors
+        }, status.HTTP_400_BAD_REQUEST)
+            
+        
+            
+    
             

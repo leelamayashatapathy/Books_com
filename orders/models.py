@@ -45,3 +45,12 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.book.title} x {self.quantity}"
+    
+    
+    
+class VendorOrder(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="vendor_orders")
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=OrderStatus.choices, default=OrderStatus.PENDING)
+    bok_order_id = models.CharField(max_length=30)
+    
